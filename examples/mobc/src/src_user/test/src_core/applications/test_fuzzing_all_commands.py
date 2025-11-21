@@ -19,7 +19,8 @@ import re
 import isslwings as wings
 import pytest
 
-ROOT_PATH = "../../../"
+# ROOT_PATH = "../../../"
+ROOT_PATH = "../../"
 sys.path.append(os.path.dirname(__file__) + "/" + ROOT_PATH + "utils")
 sys.path.append(os.path.dirname(__file__))
 import c2a_enum_utils
@@ -35,7 +36,7 @@ c2a_enum = c2a_enum_utils.get_c2a_enum()
 ope = wings_utils.get_wings_operation()
 
 # Cmd DB CSV 경로
-CMD_DB_CSV_PATH = os.path.dirname(__file__) + "/../../../../../../tlm-cmd-db/CMD_DB/SAMPLE_MOBC_CMD_DB_CMD_DB.csv"
+CMD_DB_CSV_PATH = os.path.dirname(__file__) + "/" + ROOT_PATH + "/../../../tlm-cmd-db/CMD_DB/SAMPLE_MOBC_CMD_DB_CMD_DB.csv"
 
 
 # 함수들은 fuzzing_helper 모듈에서 import됨
@@ -249,6 +250,7 @@ def list_all_commands():
 if __name__ == "__main__":
     # 직접 실행 시 명령 목록 출력
     list_all_commands()
+    test_fuzz_all_commands_rt(max_commands = 10)
     
     # 또는 특정 명령 정보 확인
     # cmd_info = get_command_info_from_db("NOP")
