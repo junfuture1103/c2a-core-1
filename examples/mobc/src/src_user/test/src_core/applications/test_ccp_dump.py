@@ -122,6 +122,17 @@ def test_ccp_dump_cdis():
 
 @pytest.mark.real
 @pytest.mark.sils
+def test_send_nop():
+    """NOP 명령을 Realtime Command로 전송하는 테스트"""
+    # NOP 명령 전송 (파라미터 없음)
+    assert "SUC" == wings.util.send_rt_cmd_and_confirm(
+        ope, c2a_enum.Cmd_CODE_NOP, (), c2a_enum.Tlm_CODE_HK
+    )
+    print("NOP 명령이 성공적으로 전송되었습니다.")
+
+
+@pytest.mark.real
+@pytest.mark.sils
 def test_ccp_dump_bct():
     # BCT は空では不定がはいってるだけ． Cmd_CCP_DUMP_BCT で空を取得してもエラーにならない
     clear_bct(c2a_enum.BC_TEST_USE_PYTEST)
