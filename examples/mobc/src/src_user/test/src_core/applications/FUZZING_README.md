@@ -7,7 +7,105 @@
 - `test_fuzzing_all_commands.py`: 메인 퍼징 스크립트
 - `fuzzing_helper.py`: 퍼징 유틸리티 함수들
 
-## 사용 방법
+## C2A build
+```
+#cargo clean
+cd c2a-core/examples/mobc
+
+export CC=gcc
+export CXX=g++
+export CFLAGS="--coverage -O0"
+export CXXFLAGS="--coverage -O0"
+
+# 중요 -> Rust는 LDFLAGS를 무시함.
+export RUSTFLAGS="-C link-arg=--coverage -C link-arg=-lgcov"
+
+# 이후 빌드
+cargo build        # 또는 cargo run
+cargo run
+```
+
+## C2A execute
+```
+MUST be in c2a-core/examples/mobc.
+MUST use pnpm run devtools:sils. not cargo run
+
+*[main][~/jun/c2a-fuzz/c2a-core/examples/mobc]$ pnpm run devtools:sils  
+```
+
+## GCOV recording
+c2a build result in c2a-core/target
+
+
+shoud insert exit(0); in Cmd_Nop for record GCOV.
+c2a has no exit cmd
+```c
+//c2a-core/applications/nop.c
+CCP_CmdRet Cmd_NOP(const CommonCmdPacket* packet)
+{
+  (void)packet;
+  //by juntheworld
+  exit(0);
+  return CCP_make_cmd_ret_without_err_code(CCP_EXEC_SUCCESS);
+}
+```
+
+## Example of Sending One command
+```
+*[main][~/jun/c2a-fuzz/c2a-core/examples/mobc/src/src_user/test]$ python3 ./src_core/applications/test_by_juntheworld.py 
+```
+just send NoP
+```
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+
+import isslwings as wings
+import pytest
+
+# ROOT_PATH = "../../../"
+ROOT_PATH = "../../"
+path = os.path.dirname(__file__) + "/" + ROOT_PATH + "utils"
+print(path)
+
+sys.path.append(os.path.dirname(__file__) + "/" + ROOT_PATH + "utils")
+import c2a_enum_utils
+import wings_utils
+
+c2a_enum = c2a_enum_utils.get_c2a_enum()
+ope = wings_utils.get_wings_operation()
+
+@pytest.mark.real
+@pytest.mark.sils
+def test_event_utility():
+    tlm_EH = wings.util.generate_and_receive_tlm(
+        ope, c2a_enum.Cmd_CODE_TG_GENERATE_RT_TLM, c2a_enum.Tlm_CODE_EH
+    )
+    print("c2a_enum.Cmd_CODE_TG_GENERATE_RT_TLM", dir(c2a_enum))
+    print("tlm_EH : ", tlm_EH)
+    print("tlm_EH[EH.EVENT_UTIL.IS_ENABLED_EH_EXECUTION] : ", tlm_EH["EH.EVENT_UTIL.IS_ENABLED_EH_EXECUTION"])
+    assert tlm_EH["EH.EVENT_UTIL.IS_ENABLED_EH_EXECUTION"] == "ENABLE"
+
+def test_send_nop():
+    wings.util.send_rt_cmd_and_confirm(
+        ope, c2a_enum.Cmd_CODE_NOP, (), c2a_enum.Tlm_CODE_HK
+    )
+
+def test_tmgr_set_time():
+    wings.util.send_rt_cmd_and_confirm(
+        ope, c2a_enum.Cmd_CODE_TMGR_SET_TIME, (0xFFFFFFFF,), c2a_enum.Tlm_CODE_HK
+    )
+
+if __name__ == "__main__":
+    test_send_nop()
+    # test_tmgr_set_time()
+
+
+
+```
+## 사용 방법 (1)
 
 ### 1. 기본 사용법 (모든 명령을 Realtime Command로 테스트)
 
