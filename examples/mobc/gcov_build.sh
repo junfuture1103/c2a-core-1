@@ -1,4 +1,3 @@
-#cargo clean
 
 export CC=gcc
 export CXX=g++
@@ -11,7 +10,6 @@ export RUSTFLAGS="-C link-arg=--coverage -C link-arg=-lgcov"
 # 이후 빌드
 cargo build        # 또는 cargo run
 
-lcov --capture --initial --directory ./target --output-file ./target/coverage_base.info
+lcov --capture --initial --directory ../../target --output-file ../../target/coverage_base.info
 
-cargo run
-
+pnpm run devtools:sils
