@@ -1,4 +1,18 @@
 # Core of Command Centric Architecture
+## juntheworld fuzzing test
+```
+# in c2a-core-1
+./cov_send.sh
+
+cd example/mobc
+./gcov_build.sh
+
+# after testing
+
+cd c2a-core-1
+./coverage_logger.sh # in snapshot -> cov_send.sh automatically start
+
+```
 
 ## C2A
 - Command Centric Architecture

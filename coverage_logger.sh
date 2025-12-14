@@ -12,7 +12,7 @@ fi
 
 BUILD_DIR=./target
 
-ROOT_DIR=./result/$START_TS
+ROOT_DIR=./coverage_result/$START_TS
 LOG_DIR=${ROOT_DIR}/info_logs
 HTML_DIR=${ROOT_DIR}/html_reports
 SUMMARY_LOG=${ROOT_DIR}/coverage_summary.log
